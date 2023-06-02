@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.1.31903.286
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.33529.622
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{962EC435-6130-4B75-BAC1-12323B067443}"
 EndProject
@@ -247,6 +247,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nethereum.Merkle", "src\Nethereum.Merkle\Nethereum.Merkle.csproj", "{CCCC6E06-68C4-4F70-9949-CD01C9AA6F50}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nethereum.Merkle.Patricia", "src\Nethereum.Merkle.Patricia\Nethereum.Merkle.Patricia.csproj", "{1997B6DA-03A1-426E-9ACB-1113F00D943B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTest", "MyTest\MyTest.csproj", "{1802C190-583A-4988-A499-DFF1A37B4F42}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1620,6 +1622,22 @@ Global
 		{1997B6DA-03A1-426E-9ACB-1113F00D943B}.Release|x64.Build.0 = Release|Any CPU
 		{1997B6DA-03A1-426E-9ACB-1113F00D943B}.Release|x86.ActiveCfg = Release|Any CPU
 		{1997B6DA-03A1-426E-9ACB-1113F00D943B}.Release|x86.Build.0 = Release|Any CPU
+		{1802C190-583A-4988-A499-DFF1A37B4F42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1802C190-583A-4988-A499-DFF1A37B4F42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1802C190-583A-4988-A499-DFF1A37B4F42}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{1802C190-583A-4988-A499-DFF1A37B4F42}.Debug|ARM.Build.0 = Debug|Any CPU
+		{1802C190-583A-4988-A499-DFF1A37B4F42}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1802C190-583A-4988-A499-DFF1A37B4F42}.Debug|x64.Build.0 = Debug|Any CPU
+		{1802C190-583A-4988-A499-DFF1A37B4F42}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1802C190-583A-4988-A499-DFF1A37B4F42}.Debug|x86.Build.0 = Debug|Any CPU
+		{1802C190-583A-4988-A499-DFF1A37B4F42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1802C190-583A-4988-A499-DFF1A37B4F42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1802C190-583A-4988-A499-DFF1A37B4F42}.Release|ARM.ActiveCfg = Release|Any CPU
+		{1802C190-583A-4988-A499-DFF1A37B4F42}.Release|ARM.Build.0 = Release|Any CPU
+		{1802C190-583A-4988-A499-DFF1A37B4F42}.Release|x64.ActiveCfg = Release|Any CPU
+		{1802C190-583A-4988-A499-DFF1A37B4F42}.Release|x64.Build.0 = Release|Any CPU
+		{1802C190-583A-4988-A499-DFF1A37B4F42}.Release|x86.ActiveCfg = Release|Any CPU
+		{1802C190-583A-4988-A499-DFF1A37B4F42}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

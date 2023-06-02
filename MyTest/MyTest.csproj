@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\consoletests\Nethereum.WebSocketsStreamingTest\Nethereum.WebSocketsStreamingTest.csproj" />
+    <ProjectReference Include="..\src\Nethereum.HDWallet\Nethereum.HdWallet.csproj" />
+    <ProjectReference Include="..\src\Nethereum.Hex\Nethereum.Hex.csproj" />
+    <ProjectReference Include="..\src\Nethereum.RPC.Reactive\Nethereum.RPC.Reactive.csproj" />
+    <ProjectReference Include="..\src\Nethereum.RPC\Nethereum.RPC.csproj" />
+    <ProjectReference Include="..\src\Nethereum.Web3\Nethereum.Web3.csproj" />
+  </ItemGroup>
+
+</Project>
