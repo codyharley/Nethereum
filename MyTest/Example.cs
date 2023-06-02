@@ -1,18 +1,24 @@
 ﻿using Nethereum.ABI.FunctionEncoding.Attributes;
 using Nethereum.Contracts;
 using Nethereum.Contracts.Standards.ENS.ENSRegistry.ContractDefinition;
+using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Hex.HexTypes;
+using Nethereum.Model;
 using Nethereum.RPC.Eth.Blocks;
 using Nethereum.RPC.Eth.DTOs;
 using Nethereum.RPC.Eth.Transactions;
 using Nethereum.RPC.Fee1559Suggestions;
 using Nethereum.RPC.TransactionManagers;
+using Nethereum.Signer;
+using Nethereum.Web3;
 using Nethereum.Web3.Accounts;
+using Org.BouncyCastle.Asn1.Cms;
 using Org.BouncyCastle.Asn1.Ocsp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -33,9 +39,10 @@ namespace MyTest
     }
     public class Example
     {
-        private string mainneturl = "https://bsc.getblock.io/2ede8ab6-98b5-48c0-b7f0-22063b9e240c/mainnet/";
-        private string testneturl = "https://bsc.getblock.io/2ede8ab6-98b5-48c0-b7f0-22063b9e240c/testnet/";
-
+        //private string mainneturl = "https://bsc.getblock.io/2ede8ab6-98b5-48c0-b7f0-22063b9e240c/mainnet/";
+        // private string testneturl = "https://bsc.getblock.io/2ede8ab6-98b5-48c0-b7f0-22063b9e240c/testnet/";
+        private string mainneturl = "https://bsc-dataseed1.binance.org:443";
+        private string testneturl = "https://data-seed-prebsc-1-s3.binance.org:8545/";
         // local
         //string url = "http://34.126.64.227:8545";
         //var wsurl = "ws://34.124.164.9:8546";
@@ -48,7 +55,7 @@ namespace MyTest
         // string url = "https://sepolia.infura.io/v3/2c15be96319544eda4898198a3c5d0df";
         //string wsurl = "wss://sepolia.infura.io/ws/v3/2c15be96319544eda4898198a3c5d0df";
         string address = "0xDb6565ce977571907D432625752d8857e3C13c26";
-        Account account = new Account("2aca6af9b2bed97c59a3b79effb536c1db9749f1d379b3cc04a838e71ad0504f");
+        Nethereum.Web3.Accounts.Account account = new Nethereum.Web3.Accounts.Account("2aca6af9b2bed97c59a3b79effb536c1db9749f1d379b3cc04a838e71ad0504f");
         string wordphrace = "young faculty leader glue quality guard pulse tortoise just canoe hood lecture";
         string password = "Baotram@2208";
         List<string> wallets = new List<string>() {
@@ -64,58 +71,28 @@ namespace MyTest
         {
             try
             {
-                account = new Account("3e10e7222821b54ec3375e7cb9a82952494673a8f61cb2feaf2703bc078a9a33", 97);
+                //int chainid = 56;
+                //var privatekey = "bd5df3be0194666967ad4074c88c9113f1f3af2fe94d4aebda745d61e291e025";
+                //var sender = "0xaC8C95930fD77fb9328EC51A45562cf895dBC48d";
+                //var receiver = "0xa32B68aA3cBBC0496d512663EF383C602C029bee";
+
+                int chainid = 97;
+                var privatekey = "3e10e7222821b54ec3375e7cb9a82952494673a8f61cb2feaf2703bc078a9a33";
+                var sender = "0x8041F92024923D6c79b05d57FA82e16499EaD66f";
+                var receiver = "0xdf4A3155C7D9517ed552b73Eef7808509b5F66BB";
+
+                account = new Nethereum.Web3.Accounts.Account(privatekey, chainid);
                 var web3 = new Nethereum.Web3.Web3(account, testneturl);
-                web3.TransactionManager.UseLegacyAsDefault = true;
-                var ballance = await web3.Eth.GetBalance.SendRequestAsync("0x8041F92024923D6c79b05d57FA82e16499EaD66f");
+                var amount = 0.001;
+                var ballance = await web3.Eth.GetBalance.SendRequestAsync(sender);
                 var currentbalance = Nethereum.Util.UnitConversion.Convert.FromWei(ballance);
                 if (currentbalance > 0)
                 {
-                    var transactionManager = web3.TransactionManager;
-                    var fromAddress = transactionManager?.Account?.Address;
-                    //Sending transaction
-                    var transactionInput = EtherTransferTransactionInputBuilder.CreateTransactionInput(fromAddress, "0xdf4A3155C7D9517ed552b73Eef7808509b5F66BB", 0.01m, 2);
-                    //Raw transaction signed
-                    var rawTransaction = await transactionManager.SignTransactionAsync(transactionInput);
-                    var txnHash = await web3.Eth.Transactions.SendRawTransaction.SendRequestAsync("0x" + rawTransaction);
-                    Console.WriteLine(txnHash);
-                    var txnReceipt = await web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(txnHash);
+                    //var txhash = await SendLegacy(web3, privatekey, chainid, receiver, amount);
 
-                    while (txnReceipt == null)
-                    {
-                        Thread.Sleep(1000);
-                        txnReceipt = await web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(txnHash);
-                    }
+                    var txhash = await SendEIP1559(web3, privatekey, chainid, sender, receiver, amount);
 
-
-                    //var chainid = await web3.Eth.ChainId.SendRequestAsync();
-
-                    //var feeStrategy = new SimpleFeeSuggestionStrategy(web3.Client);
-
-                    //var fee = await feeStrategy.SuggestFeeAsync();
-                    //var trans = new TransactionInput()
-                    //{
-                    //    ChainId = new HexBigInteger(chainid),
-                    //    Type = new HexBigInteger(2),
-                    //    From = web3.TransactionManager.Account.Address,
-                    //    MaxFeePerGas = new HexBigInteger(fee.MaxFeePerGas.Value),
-                    //    MaxPriorityFeePerGas = new HexBigInteger(fee.MaxPriorityFeePerGas.Value),
-                    //    Nonce = await web3.Eth.TransactionManager.Account.NonceService.GetNextNonceAsync(),
-                    //    To = "0xdf4A3155C7D9517ed552b73Eef7808509b5F66BB",
-                    //    Value = new HexBigInteger(new BigInteger(0.01M))
-
-                    //};
-                    //var encoded = await web3.TransactionManager.SignTransactionAsync(trans);
-
-                    ////  web3.TransactionManager.ra
-                    //var txId = await web3.Eth.Transactions.SendRawTransaction.SendRequestAsync("0x" + encoded);
-                    //var receipt = await web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(txId);
-
-                    //while (receipt == null)
-                    //{
-                    //    Thread.Sleep(1000);
-                    //    receipt = await web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(txId);
-                    //}
+                    Console.WriteLine(txhash);
                 }
             }
             catch (Exception ex)
@@ -123,6 +100,110 @@ namespace MyTest
 
             }
 
+        }
+
+        public async Task TestBNB()
+        {
+            //First let's create an account with our private key for the account address 
+            var privateKey = "3e10e7222821b54ec3375e7cb9a82952494673a8f61cb2feaf2703bc078a9a33";
+            var chainId = 97; //Nethereum test chain, chainId
+            var account = new Nethereum.Web3.Accounts.Account(privateKey, chainId);
+            Console.WriteLine("Our account: " + account.Address);
+            //Now let's create an instance of Web3 using our account pointing to our nethereum testchain
+            var web3 = new Web3(account, "https://data-seed-prebsc-1-s3.binance.org:8545/");
+            web3.TransactionManager.UseLegacyAsDefault = true;
+            var toAddress = "0xdf4A3155C7D9517ed552b73Eef7808509b5F66BB";
+
+            var transactionManager = web3.TransactionManager;
+            var fromAddress = transactionManager?.Account?.Address;
+            //Start setup:
+            //Sending transaction
+            var transactionInput = EtherTransferTransactionInputBuilder.CreateTransactionInput(fromAddress, toAddress, 0.001m, 2);
+            transactionInput.ChainId = new HexBigInteger(new BigInteger(chainId));
+            //Raw transaction signed
+            var rawTransaction = await transactionManager.SignTransactionAsync(transactionInput);
+            var txnHash = await web3.Eth.Transactions.SendRawTransaction.SendRequestAsync(rawTransaction);
+            //Getting the transaction from the chain
+            var transactionRpc = await web3.Eth.Transactions.GetTransactionByHash.SendRequestAsync(txnHash);
+
+            //Using the transanction from RPC to build a txn for signing / signed
+            var transaction = TransactionFactory.CreateLegacyTransaction(transactionRpc.To, transactionRpc.Gas, transactionRpc.GasPrice, transactionRpc.Value, transactionRpc.Input, transactionRpc.Nonce,
+                    transactionRpc.R, transactionRpc.S, transactionRpc.V);
+
+            //Get the raw signed rlp recovered
+            var rawTransactionRecovered = transaction.GetRLPEncoded().ToHex();
+
+            //Get the account sender recovered
+            var accountSenderRecovered = string.Empty;
+            if (transaction is LegacyTransactionChainId)
+            {
+                var txnChainId = transaction as LegacyTransactionChainId;
+                accountSenderRecovered = EthECKey.RecoverFromSignature(transaction.Signature.ToEthECDSASignature(), transaction.RawHash, txnChainId.GetChainIdAsBigInteger()).GetPublicAddress();
+            }
+            else
+            {
+                accountSenderRecovered = EthECKey.RecoverFromSignature(transaction.Signature.ToEthECDSASignature(), transaction.RawHash).GetPublicAddress();
+            }
+            Console.WriteLine(rawTransaction);
+            Console.WriteLine(rawTransactionRecovered);
+            Console.WriteLine(web3.TransactionManager.Account.Address);
+            Console.WriteLine(accountSenderRecovered);
+        }
+        public async Task<string> SendEIP1559(Web3 web3, string privatekey, int chainid, string sender, string receiver, double amount)
+        {
+
+
+            var feeStrategy = new SimpleFeeSuggestionStrategy(web3.Client);
+
+            var fee = await feeStrategy.SuggestFeeAsync();
+            var trans = new TransactionInput()
+            {
+                ChainId = new HexBigInteger(chainid),
+                Type = new HexBigInteger(2),
+                From = sender,
+                MaxFeePerGas = new HexBigInteger(fee.MaxFeePerGas.Value),
+                MaxPriorityFeePerGas = new HexBigInteger(fee.MaxPriorityFeePerGas.Value),
+                Nonce = await web3.Eth.TransactionManager.Account.NonceService.GetNextNonceAsync(),
+                To = receiver,
+                Value = new HexBigInteger(new BigInteger(amount))
+
+            };
+
+            var encoded = await web3.TransactionManager.SignTransactionAsync(trans);
+
+            //  web3.TransactionManager.ra
+            var txId = await web3.Eth.Transactions.SendRawTransaction.SendRequestAsync(encoded);
+            var receipt = await web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(txId);
+
+            while (receipt == null)
+            {
+                Thread.Sleep(1000);
+                receipt = await web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(txId);
+            }
+            return txId;
+        }
+        public async Task<string> SendLegacy(Web3 web3, string privatekey, int chainid, string address, double amount)
+        {
+            web3.TransactionManager.UseLegacyAsDefault = true;
+            var nonce = web3.Eth.Transactions.GetTransactionCount.SendRequestAsync(account.Address).Result;
+            var feeStrategy = new SimpleFeeSuggestionStrategy(web3.Client);
+            var fee = await feeStrategy.SuggestFeeAsync();
+            // send to customer
+            TransactionInput transactionInput = new TransactionInput
+            {
+                From = account.Address,
+                GasPrice = new HexBigInteger(Web3.Convert.ToWei(new decimal(0.00001) / 21000)),
+                To = address,
+                Value = new HexBigInteger(Web3.Convert.ToWei(amount)),
+                Nonce = new HexBigInteger(nonce),
+                MaxFeePerGas = new HexBigInteger(fee.MaxFeePerGas.Value),
+                MaxPriorityFeePerGas = new HexBigInteger(fee.MaxPriorityFeePerGas.Value)
+            };
+            Nethereum.Signer.LegacyTransactionSigner txSigned = new Nethereum.Signer.LegacyTransactionSigner();
+            string signedTx = txSigned.SignTransaction(privatekey, new BigInteger(chainid), transactionInput.To, transactionInput.Value, transactionInput.Nonce);
+
+            Nethereum.RPC.Eth.Transactions.EthSendRawTransaction transaction = new Nethereum.RPC.Eth.Transactions.EthSendRawTransaction(web3.Client);
+            return await transaction.SendRequestAsync(signedTx);
         }
         public async Task TestHDWalletAsync()
         {

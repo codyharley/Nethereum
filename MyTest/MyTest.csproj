@@ -13,6 +13,7 @@
     <ProjectReference Include="..\src\Nethereum.Hex\Nethereum.Hex.csproj" />
     <ProjectReference Include="..\src\Nethereum.RPC.Reactive\Nethereum.RPC.Reactive.csproj" />
     <ProjectReference Include="..\src\Nethereum.RPC\Nethereum.RPC.csproj" />
+    <ProjectReference Include="..\src\Nethereum.Signer\Nethereum.Signer.csproj" />
     <ProjectReference Include="..\src\Nethereum.Web3\Nethereum.Web3.csproj" />
   </ItemGroup>
 
