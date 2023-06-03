@@ -20,8 +20,8 @@ while (running)
 
     MyTest.Example example = new MyTest.Example();
 
-    // await example.TestWalletBNB();
-    await example.TestBNB();
+    await example.TestWalletBNB();
+
     //await example.Deposit();
 
     Console.WriteLine("Date:" + DateTime.Now.ToString());

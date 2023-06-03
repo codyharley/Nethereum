@@ -40,9 +40,9 @@ namespace MyTest
     public class Example
     {
         //private string mainneturl = "https://bsc.getblock.io/2ede8ab6-98b5-48c0-b7f0-22063b9e240c/mainnet/";
-        // private string testneturl = "https://bsc.getblock.io/2ede8ab6-98b5-48c0-b7f0-22063b9e240c/testnet/";
+        private string testneturl = "https://bsc.getblock.io/2ede8ab6-98b5-48c0-b7f0-22063b9e240c/testnet/";
         private string mainneturl = "https://bsc-dataseed1.binance.org:443";
-        private string testneturl = "https://data-seed-prebsc-1-s3.binance.org:8545/";
+        // private string testneturl = "https://data-seed-prebsc-1-s3.binance.org:8545/";
         // local
         //string url = "http://34.126.64.227:8545";
         //var wsurl = "ws://34.124.164.9:8546";
@@ -163,10 +163,9 @@ namespace MyTest
                 From = sender,
                 MaxFeePerGas = new HexBigInteger(fee.MaxFeePerGas.Value),
                 MaxPriorityFeePerGas = new HexBigInteger(fee.MaxPriorityFeePerGas.Value),
-                Nonce = await web3.Eth.TransactionManager.Account.NonceService.GetNextNonceAsync(),
+                // Nonce = await web3.Eth.TransactionManager.Account.NonceService.GetNextNonceAsync(),
                 To = receiver,
                 Value = new HexBigInteger(new BigInteger(amount))
-
             };
 
             var encoded = await web3.TransactionManager.SignTransactionAsync(trans);
@@ -177,7 +176,7 @@ namespace MyTest
 
             while (receipt == null)
             {
-                Thread.Sleep(1000);
+                Thread.Sleep(10000);
                 receipt = await web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(txId);
             }
             return txId;
